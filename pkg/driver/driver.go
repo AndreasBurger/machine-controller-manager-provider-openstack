@@ -45,11 +45,12 @@ func (p *OpenstackDriver) CreateMachine(ctx context.Context, req *driver.CreateM
 
 	// Check if incoming provider in the MachineClass is a provider we support
 	if req.MachineClass.Provider != openstackProvider {
-		err := fmt.Errorf("Requested for Provider '%s', we only support '%s'", req.MachineClass.Provider, openstackProvider)
+		err := fmt.Errorf("requested for Provider '%s', we only support '%s'", req.MachineClass.Provider, openstackProvider)
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	providerConfig, err := p.decodeProviderSpec(req.MachineClass.ProviderSpec)
+	klog.V(1).Infof("decoded spec [cfg=%+v]", providerConfig.Spec)
 	if err != nil {
 		klog.Errorf("decoding provider spec for machine class %q failed with: %v", req.MachineClass.Name, err)
 		return nil, status.Error(codes.InvalidArgument, err.Error())

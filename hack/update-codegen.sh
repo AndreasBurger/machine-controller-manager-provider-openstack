@@ -17,7 +17,7 @@ bash "${PROJECT_ROOT}"/vendor/k8s.io/code-generator/generate-internal-groups.sh 
   github.com/gardener/machine-controller-manager-provider-openstack/pkg/client \
   github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis \
   github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis \
-  "openstack:v1alpha1" \
+  "openstack:v1alpha1,v1alpha2" \
   --go-header-file "${PROJECT_ROOT}/hack/LICENSE_BOILERPLATE.txt"
 
 bash "${PROJECT_ROOT}"/vendor/k8s.io/code-generator/generate-internal-groups.sh \
@@ -25,6 +25,6 @@ bash "${PROJECT_ROOT}"/vendor/k8s.io/code-generator/generate-internal-groups.sh 
   github.com/gardener/machine-controller-manager-provider-openstack/pkg/client \
   github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis \
   github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis \
-  "openstack:v1alpha1" \
-  --extra-peer-dirs=github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack,github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack/v1alpha1,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/conversion,k8s.io/apimachinery/pkg/runtime \
+  "openstack:v1alpha1,v1alpha2" \
+  --extra-peer-dirs=github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack,github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack/v1alpha1,github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack/v1alpha2,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/conversion,k8s.io/apimachinery/pkg/runtime \
   --go-header-file "${PROJECT_ROOT}/hack/LICENSE_BOILERPLATE.txt"

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2020 SAP SE or an SAP affiliate company and Gardener contributors
 #
 # SPDX-License-Identifier: Apache-2.0
-
+TOOLS_DIR := hack/tools
 include vendor/github.com/gardener/gardener/hack/tools.mk
 -include .env
 

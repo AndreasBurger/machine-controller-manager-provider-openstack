@@ -18,7 +18,6 @@ import (
 	"github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
-	"k8s.io/utils/pointer"
 
 	"github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/cloudprovider"
 	"github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack"
@@ -55,9 +54,9 @@ var _ = Describe("Executor", func() {
 
 		cfg = &openstack.MachineProviderConfig{
 			Spec: openstack.MachineProviderConfigSpec{
-				Tags:      tags,
-				Region:    region,
-				NetworkID: networkID,
+				Tags:    tags,
+				Region:  region,
+				Network: openstack.OpenStackNetwork{NetworkID: networkID},
 			},
 		}
 	})
@@ -84,9 +83,8 @@ var _ = Describe("Executor", func() {
 					FlavorName:     flavorName,
 					SecurityGroups: nil,
 					Tags:           tags,
-					NetworkID:      networkID,
+					Network:        openstack.OpenStackNetwork{NetworkID: networkID, Cidr: podCidr},
 					RootDiskSize:   0,
-					PodNetworkCidr: podCidr,
 				},
 			}
 		})
@@ -128,7 +126,7 @@ var _ = Describe("Executor", func() {
 		It("should succeed when spec contains subnet", func() {
 			subnetID := "subnetID"
 
-			cfg.Spec.SubnetID = &subnetID
+			cfg.Spec.Network.SubnetID = subnetID
 			ex := &Executor{
 				Compute: compute,
 				Network: network,
@@ -389,7 +387,7 @@ var _ = Describe("Executor", func() {
 				machineName = "foo"
 			)
 
-			cfg.Spec.SubnetID = pointer.StringPtr(subnetID)
+			cfg.Spec.Network.SubnetID = subnetID
 			gomock.InOrder(
 				compute.EXPECT().ListServers(&servers.ListOpts{Name: machineName}).Return(serverList, nil),
 				compute.EXPECT().DeleteServer("id1").Return(nil),
@@ -417,7 +415,7 @@ var _ = Describe("Executor", func() {
 				machineName = "foo"
 			)
 
-			cfg.Spec.SubnetID = pointer.StringPtr(subnetID)
+			cfg.Spec.Network.SubnetID = subnetID
 			gomock.InOrder(
 				compute.EXPECT().ListServers(&servers.ListOpts{Name: machineName}).Return(serverList, nil),
 				compute.EXPECT().DeleteServer("id1").Return(nil),

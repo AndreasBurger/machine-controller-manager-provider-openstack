@@ -35,12 +35,8 @@ type MachineProviderConfigSpec struct {
 	SecurityGroups []string
 	// Tags is a map of key-value pairs that annotate the instance. Tags are stored in the instance's Metadata field.
 	Tags map[string]string
-	// NetworkID is the ID of the network the instance should belong to.
-	NetworkID string
-	// SubnetID is the ID of the subnet the instance should belong to. If SubnetID is not specified
-	SubnetID *string
-	// PodNetworkCidr is the CIDR range for the pods assigned to this instance.
-	PodNetworkCidr string
+
+	Network OpenStackNetwork
 	// The size of the root disk used for the instance.
 	RootDiskSize int
 	// The type of the root disk type used for the instance
@@ -51,15 +47,17 @@ type MachineProviderConfigSpec struct {
 	ServerGroupID *string
 	// Networks is a list of networks the instance should belong to. Networks is mutually exclusive with the NetworkID option
 	// and only one should be specified.
-	Networks []OpenStackNetwork
+	AdditionalNetworks []OpenStackNetwork
 }
 
-// OpenStackNetwork describes a network this instance should belong to.
+// OpenStackNetwork describes a network a machine-instance should belong to.
 type OpenStackNetwork struct {
-	// Id is the ID of a network the instance should belong to.
-	Id string
+	// ID is the ID of a network the instance should belong to.
+	NetworkID string
+
+	SubnetID string
+	// Cidr specifies the CIDR-range that created machines may use as part of the network.
+	Cidr string
 	// Name is the name of a network the instance should belong to. If Id is specified, it takes priority over Name.
 	Name string
-	// PodNetwork specifies whether this network is part of the pod network.
-	PodNetwork bool
 }

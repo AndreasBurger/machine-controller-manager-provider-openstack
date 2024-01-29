@@ -18,4 +18,4 @@ set -e
 
 echo "> Generate"
 
-go generate $@
+go generate -v -x $@

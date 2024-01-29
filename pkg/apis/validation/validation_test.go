@@ -36,13 +36,14 @@ var _ = Describe("Validation", func() {
 						fmt.Sprintf("%s-foo", ServerTagRolePrefix):    "1",
 						fmt.Sprintf("%s-foo", ServerTagClusterPrefix): "1",
 					},
-					NetworkID:      "networkID",
-					SubnetID:       nil,
-					PodNetworkCidr: "10.0.0.1/8",
-					RootDiskSize:   0,
-					UseConfigDrive: nil,
-					ServerGroupID:  nil,
-					Networks:       nil,
+					Network: api.OpenStackNetwork{
+						NetworkID: "networkID",
+						Cidr:      "10.0.0.1/8",
+					},
+					RootDiskSize:       0,
+					UseConfigDrive:     nil,
+					ServerGroupID:      nil,
+					AdditionalNetworks: nil,
 				},
 			}
 		})
@@ -59,7 +60,7 @@ var _ = Describe("Validation", func() {
 				spec.FlavorName = ""
 				spec.AvailabilityZone = ""
 				spec.KeyName = ""
-				spec.PodNetworkCidr = ""
+				spec.Network.Cidr = ""
 				err := validateMachineProviderConfig(machineProviderConfig)
 
 				Expect(err).To(ConsistOf(
@@ -88,53 +89,16 @@ var _ = Describe("Validation", func() {
 		})
 
 		Context("#Networks", func() {
-			It("should not allow Networks and NetworkID data in the same request", func() {
-				spec := &machineProviderConfig.Spec
-				spec.Networks = []api.OpenStackNetwork{
-					{
-						Id:         "foo",
-						Name:       "",
-						PodNetwork: false,
-					},
-				}
-
-				err := validateMachineProviderConfig(machineProviderConfig)
-				Expect(err).To(ConsistOf(
-					PointTo(MatchFields(IgnoreExtras, Fields{
-						"Type":  BeEquivalentTo("FieldValueForbidden"),
-						"Field": Equal("spec.networks"),
-					})),
-				))
-			})
-
+			// TODO: Update
 			It("should not allow missing Networks and NetworkID in the same request", func() {
 				spec := &machineProviderConfig.Spec
-				spec.NetworkID = ""
+				spec.Network.NetworkID = ""
 
 				err := validateMachineProviderConfig(machineProviderConfig)
 				Expect(err).To(ConsistOf(
 					PointTo(MatchFields(IgnoreExtras, Fields{
 						"Type":  BeEquivalentTo("FieldValueForbidden"),
 						"Field": Equal("spec.networkID"),
-					})),
-				))
-			})
-
-			It("should fail if Networks member are incorrect", func() {
-				spec := &machineProviderConfig.Spec
-				spec.NetworkID = ""
-				spec.Networks = []api.OpenStackNetwork{
-					{
-						Id:         "foo",
-						Name:       "foo",
-						PodNetwork: false,
-					},
-				}
-				err := validateMachineProviderConfig(machineProviderConfig)
-				Expect(err).To(ConsistOf(
-					PointTo(MatchFields(IgnoreExtras, Fields{
-						"Type":  BeEquivalentTo("FieldValueForbidden"),
-						"Field": Equal("spec.networks[0]"),
 					})),
 				))
 			})

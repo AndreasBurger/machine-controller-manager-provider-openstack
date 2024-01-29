@@ -51,20 +51,17 @@ func validateMachineProviderConfig(providerConfig *openstack.MachineProviderConf
 	if "" == providerConfig.Spec.KeyName {
 		allErrs = append(allErrs, field.Required(fldPath.Child("keyName"), "KeyName is required"))
 	}
-	if "" != providerConfig.Spec.NetworkID && len(providerConfig.Spec.Networks) > 0 {
-		allErrs = append(allErrs, field.Forbidden(fldPath.Child("networks"), "\"networks\" list should not be specified along with \"providerConfig.Spec.NetworkID\""))
-	}
-	if "" == providerConfig.Spec.NetworkID && len(providerConfig.Spec.Networks) == 0 {
+	if "" == providerConfig.Spec.Network.NetworkID && len(providerConfig.Spec.AdditionalNetworks) == 0 {
 		allErrs = append(allErrs, field.Forbidden(fldPath.Child("networkID"), "both \"networks\" and \"networkID\" should not be empty"))
 	}
-	if "" == providerConfig.Spec.PodNetworkCidr {
-		allErrs = append(allErrs, field.Required(fldPath.Child("podNetworkCidr"), "PodNetworkCidr is required"))
-	}
+	// if "" == providerConfig.Spec.PodNetworkCidr {
+	// 	allErrs = append(allErrs, field.Required(fldPath.Child("podNetworkCidr"), "PodNetworkCidr is required"))
+	// }
 	if providerConfig.Spec.RootDiskSize < 0 {
 		allErrs = append(allErrs, field.Required(fldPath.Child("rootDiskSize"), "RootDiskSize can not be negative"))
 	}
 
-	allErrs = append(allErrs, validateNetworks(providerConfig.Spec.Networks, providerConfig.Spec.PodNetworkCidr, field.NewPath("spec.networks"))...)
+	allErrs = append(allErrs, validateNetworks(providerConfig.Spec.AdditionalNetworks, providerConfig.Spec.Network.Cidr, field.NewPath("spec.additionalNetworks"))...)
 	allErrs = append(allErrs, validateClassSpecTags(providerConfig.Spec.Tags, field.NewPath("spec.tags"))...)
 
 	return allErrs
@@ -75,15 +72,12 @@ func validateNetworks(networks []openstack.OpenStackNetwork, podNetworkCidr stri
 
 	for index, network := range networks {
 		fldPath := fldPath.Index(index)
-		if "" == network.Id && "" == network.Name {
+		if "" == network.NetworkID && "" == network.Name {
 			allErrs = append(allErrs, field.Required(fldPath, "at least one of network \"id\" or \"name\" is required"))
 		}
-		if "" != network.Id && "" != network.Name {
-			allErrs = append(allErrs, field.Forbidden(fldPath, "simultaneous use of network \"id\" and \"name\" is forbidden"))
-		}
-		if "" == podNetworkCidr && network.PodNetwork {
-			allErrs = append(allErrs, field.Required(fldPath.Child("podNetwork"), "\"podNetwork\" switch should not be used in absence of \"spec.podNetworkCidr\""))
-		}
+		// if "" != network.NetworkID && "" != network.Name {
+		// 	allErrs = append(allErrs, field.Forbidden(fldPath, "simultaneous use of network \"id\" and \"name\" is forbidden"))
+		// }
 	}
 
 	return allErrs

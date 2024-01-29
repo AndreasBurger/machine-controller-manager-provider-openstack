@@ -10,11 +10,13 @@ import (
 
 	"github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack"
 	"github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack/v1alpha1"
+	"github.com/gardener/machine-controller-manager-provider-openstack/pkg/apis/openstack/v1alpha2"
 )
 
 var (
 	schemeBuilder = runtime.NewSchemeBuilder(
 		v1alpha1.AddToScheme,
+		v1alpha2.AddToScheme,
 		openstack.AddToScheme,
 		setVersionPriority,
 	)
@@ -24,7 +26,7 @@ var (
 )
 
 func setVersionPriority(scheme *runtime.Scheme) error {
-	return scheme.SetVersionPriority(v1alpha1.SchemeGroupVersion)
+	return scheme.SetVersionPriority(v1alpha2.SchemeGroupVersion, v1alpha1.SchemeGroupVersion)
 }
 
 // Install installs all APIs in the current scheme.
